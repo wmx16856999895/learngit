@@ -1,0 +1,86 @@
+在 Oracle PL/SQL 中，如果你想捕获所有异常而不使用 WHEN 子句来指定具体的异常类型，可以直接使用 EXCEPTION 块中的 OTHERS 处理器。OTHERS 是一个特殊的异常处理器，可以捕获所有未被显式捕获的异常。
+
+直接捕获所有异常
+你可以在 EXCEPTION 块中只使用 OTHERS 来捕获所有异常。
+
+DECLARE
+    v_employee_id employees.employee_id%TYPE := 9999;
+    v_employee_name employees.last_name%TYPE;
+BEGIN
+    -- 尝试查询不存在的员工
+    SELECT last_name INTO v_employee_name
+    FROM employees
+    WHERE employee_id = v_employee_id;
+
+    DBMS_OUTPUT.PUT_LINE('员工姓名: ' || v_employee_name);
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('发生了异常！');
+        DBMS_OUTPUT.PUT_LINE('错误代码: ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('错误信息: ' || SQLERRM);
+END;
+/
+说明
+OTHERS：
+
+OTHERS 是一个通用的异常处理器，可以捕获所有未被显式捕获的异常。
+
+它通常用于捕获未知的或未预料到的异常。
+
+SQLCODE 和 SQLERRM：
+
+SQLCODE 返回错误代码。
+
+SQLERRM 返回错误信息。
+
+在 OTHERS 处理器中，可以使用这两个函数获取异常的详细信息。
+
+注意事项
+避免滥用 OTHERS：
+
+虽然 OTHERS 可以捕获所有异常，但过度使用可能会隐藏具体的错误原因。
+
+建议尽量捕获具体的异常类型，以便更好地调试和处理问题。
+
+记录异常信息：
+
+在 OTHERS 处理器中，建议记录异常信息（如使用 DBMS_OUTPUT.PUT_LINE 或写入日志表），以便后续分析。
+
+重新抛出异常：
+
+如果你希望在捕获异常后重新抛出它，可以使用 RAISE 语句。
+
+示例：
+
+sql
+复制
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('捕获到异常: ' || SQLERRM);
+        RAISE;  -- 重新抛出异常
+示例：捕获所有异常并记录
+sql
+复制
+DECLARE
+    v_employee_id employees.employee_id%TYPE := 9999;
+    v_employee_name employees.last_name%TYPE;
+BEGIN
+    -- 尝试查询不存在的员工
+    SELECT last_name INTO v_employee_name
+    FROM employees
+    WHERE employee_id = v_employee_id;
+
+    DBMS_OUTPUT.PUT_LINE('员工姓名: ' || v_employee_name);
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('发生了异常！');
+        DBMS_OUTPUT.PUT_LINE('错误代码: ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('错误信息: ' || SQLERRM);
+END;
+/
+总结
+使用 OTHERS 可以直接捕获所有异常，而无需指定具体的异常类型。
+
+在 OTHERS 处理器中，可以通过 SQLCODE 和 SQLERRM 获取异常的详细信息。
+
+建议在捕获异常后记录日志或重新抛出异常，以便更好地调试和处理问题。
