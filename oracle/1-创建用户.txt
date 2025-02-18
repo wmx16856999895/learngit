@@ -1,0 +1,27 @@
+oracle:
+--1、查看已有表空间的存储路径
+select name from v$datafile;
+
+--2、创建表空间
+create tablespace waterboss
+datafile '/home/app/oracle/oradata/orcl/waterboss.dbf'
+size 100m
+autoextend on
+next 10m;
+解释：
+waterboss 为表空间名称
+datafile  用于设置物理文件名称
+size  用于设置表空间的初始大小
+autoextend on    用于设置自动增长，如果存储量超过初始大小，则开始自动扩容
+next  用于设置扩容的空间大小
+
+--1、查看当前所有用户
+select username from all_users;
+
+--2、创建新用户
+create user wateruser
+identified by 123456
+default tablespace waterboss;
+
+-- 给用户赋予dba权限
+grant dba to wateruser;
