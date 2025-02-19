@@ -1,0 +1,21 @@
+-- todo 先创建一个日志表
+create table t_update_owners_log(
+    updatetime date,
+    ownerid number,
+    oldname varchar2(30),
+    newname varchar2(30)
+);
+
+-- todo 创建触发器
+create or replace trigger tri_update_owners
+after update of name on t_owners for each row
+declare
+begin
+    insert into t_update_owners_log values (sysdate,
+        :old.id,:old.name,:new.name);
+end;
+
+-- todo 更新原表数据并提交
+update t_owners set name = '李白' where id=1;
+commit ;
+select * from t_update_owners_log;
